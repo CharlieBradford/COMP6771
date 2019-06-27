@@ -59,10 +59,10 @@ int main() {
   j[0] = 1;
   std::cout << j << '\n';
 
-  // type cast from EuclideanVector to a std::vector
-  auto lj = std::vector<double>{j};
+/*  // type cast from EuclideanVector to a std::vector
+  std::vector<double> lj = j;
 
   for (auto d : lj) {
     std::cout << d << '\n';
-  }
+  }*/
 }
