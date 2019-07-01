@@ -47,9 +47,7 @@ EuclideanVector::EuclideanVector(EuclideanVector&& e) noexcept { this->size_ = e
 /*
  * DESTRUCTOR
  */
-EuclideanVector::~EuclideanVector() noexcept {
-  delete this;
-}
+
 /*
 EuclideanVector EuclideanVector::aCopy(const EuclideanVector& e) noexcept {
   return EuclideanVector();
@@ -71,10 +69,8 @@ EuclideanVector& EuclideanVector::operator=(EuclideanVector e) noexcept {
 }
 
 EuclideanVector& EuclideanVector::operator=(EuclideanVector&& e) noexcept {
-  this->size_ = e.GetNumDimensions();
-  for (int i = 0; i < e.GetNumDimensions(); ++i) {
-    this->magnitudes_[i] = e[i];
-  }
+  this->size_ = std::move(e.size_);
+  this->magnitudes_ = std::move(e.magnitudes_);
   return *this;
 }
 
@@ -92,7 +88,7 @@ EuclideanVector& EuclideanVector::operator+=(const EuclideanVector& e) {
     err << ") and RHS(" << e.GetNumDimensions() << ") do not match";
     throw EuclideanVectorError(err.str());
   }
-  for (std::size_t i = 0; i < this->size_; ++i) {
+  for (int i = 0; i < this->GetNumDimensions(); ++i) {
     this->magnitudes_[i] += e[i];
   }
   return *this;
@@ -125,17 +121,17 @@ EuclideanVector& EuclideanVector::operator/=(const double& rhs) {
   return *this;
 }
 
-EuclideanVector::operator std::vector<double>() noexcept {
+/*EuclideanVector::operator std::vector<double>() noexcept {
   std::vector<double> v;
-  for (std::size_t i = 0; i < this->size_; ++i) {
-    v.push_back(this->magnitudes_[i]);
+  for (int i = 0; i < this->GetNumDimensions(); ++i) {
+    v.push_back(this->at(i));
   }
   return v;
-}
+}*/
 EuclideanVector::operator std::list<double>() noexcept {
   std::list<double> l;
-  for (std::size_t i = 0; i < this->size_; ++i) {
-    l.push_back(this->magnitudes_[i]);
+  for (int i = 0; i < this->GetNumDimensions(); ++i) {
+    l.push_back(this->at(i));
   }
   return l;
 }
@@ -150,6 +146,7 @@ int EuclideanVector::GetNumDimensions() const noexcept {
   return this->size_;
 }
 double EuclideanVector::GetEuclideanNorm() noexcept {
+
   double norm = 0.0;
   for (std::size_t i = 0; i < this->size_; ++i) {
     norm += this->at(i) * this->at(i);
@@ -157,8 +154,10 @@ double EuclideanVector::GetEuclideanNorm() noexcept {
   return pow(norm, 0.5);
 }
 EuclideanVector EuclideanVector::CreateUnitVector() {
-  auto copy = *this;
-  return copy / this->GetEuclideanNorm();
+  if (this->GetNumDimensions() == 0) {
+    throw EuclideanVectorError("EuclideanVector with no dimensions does not have a unit vector");
+  }
+  return *this / this->GetEuclideanNorm();
 }
 
 /*
@@ -238,7 +237,8 @@ EuclideanVector operator/(const EuclideanVector& lhs, const double& rhs) {
   for (int i = 0; i < size; ++i) {
     magnitudes.push_back(lhs[i] / rhs);
   }
-  return EuclideanVector(magnitudes.begin(), magnitudes.end());
+  auto ret = EuclideanVector(magnitudes.begin(), magnitudes.end());
+  return ret;
 }
 std::ostream& operator<<(std::ostream& os, const EuclideanVector& v) noexcept {
   os << "[";

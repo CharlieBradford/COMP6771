@@ -25,8 +25,8 @@ int main() {
   std::cout << a.GetNumDimensions() << ": " << a << '\n';
   std::cout << "D1:" << b.at(1) << " " << b << '\n';
   std::cout << c << " Euclidean Norm = " << c.GetEuclideanNorm() << '\n';
-  std::cout << d << " Unit Vector: " << d.CreateUnitVector()
-            << " L = " << d.CreateUnitVector().GetEuclideanNorm() << '\n';
+  std::cout << d << " Unit Vector: " << d.CreateUnitVector() << std::endl;
+  std::cout << " L = " << d.CreateUnitVector().GetEuclideanNorm() << '\n' << std::flush;
   std::cout << e << '\n';
   std::cout << f << '\n';
 
@@ -59,10 +59,10 @@ int main() {
   j[0] = 1;
   std::cout << j << '\n';
 
-/*  // type cast from EuclideanVector to a std::vector
-  std::vector<double> lj = j;
+  // type cast from EuclideanVector to a std::vector
+  std::vector<double> lj = std::vector<double>(j);
 
   for (auto d : lj) {
     std::cout << d << '\n';
-  }*/
+  }
 }

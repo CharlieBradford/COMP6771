@@ -23,7 +23,6 @@ class EuclideanVector {
                   std::vector<double>::const_iterator end) noexcept;
   EuclideanVector(const EuclideanVector& e) noexcept;
   EuclideanVector(EuclideanVector&& e) noexcept;
-  ~EuclideanVector() noexcept;
 
   // EuclideanVector aCopy(const EuclideanVector& e) noexcept;
   // EuclideanVector aMove(EuclideanVector&& e) noexcept;
@@ -39,7 +38,13 @@ class EuclideanVector {
   EuclideanVector& operator*=(const double& rhs) noexcept;
   EuclideanVector& operator/=(const double& rhs);
 
-  explicit operator std::vector<double>() noexcept;
+  explicit operator std::vector<double>() noexcept {
+    std::vector<double> v;
+    for (int i = 0; i < this->GetNumDimensions(); ++i) {
+      v.push_back(this->at(i));
+    }
+    return v;
+  }
   explicit operator std::list<double>() noexcept;
 
   double at(int i) noexcept;
